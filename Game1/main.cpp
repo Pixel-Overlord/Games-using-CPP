@@ -5,6 +5,11 @@ int main()
     // create a window
     sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "Pong");
 
+    // Paddle
+    sf::RectangleShape paddle({ 100.f, 20.f });
+    paddle.setPosition({ 350.f, 560.f });
+    paddle.setFillColor(sf::Color::White);
+
     // Game Loop
     while (window.isOpen())
     {
@@ -27,7 +32,9 @@ int main()
 
         window.clear(sf::Color::Blue);
 
-        // Draw objects here
+         // Draw objects here
+		window.draw(paddle);
+
         window.display();
     }
     return 0;
