@@ -30,6 +30,16 @@ int main()
             }
         }
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+        {
+            paddle.move({ -0.5f, 0.f });
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+        {
+            paddle.move({ 0.5f, 0.f });
+        }
+
         window.clear(sf::Color::Blue);
 
          // Draw objects here
