@@ -11,6 +11,12 @@
 class Game
 {
 private: 
+	// Variables
+	// Window
+	sf::RenderWindow* window;	// dynamically allocated window object
+	sf::VideoMode videoMode;	
+	sf::Event ev;
+
 	// private functions
 	void initVariables();
 	void initWindow();
@@ -20,7 +26,11 @@ public:
 	Game();
 	virtual ~Game();	// destructor
 
+	// Accessors
+	const bool running() const;	// check if the window is open
+
 	// Functions
+	void pollEvents();	// handle events
 	void update();
 	void render();
 };

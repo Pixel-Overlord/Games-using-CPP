@@ -3,10 +3,8 @@
 
 int main()
 {
-    // Window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Pong", sf::Style::Titlebar| sf::Style::Close| sf::Style::Resize);
-
-    sf::Event ev;
+	// Init new game object
+	Game game;
 
     // Font
     sf::Font font;
@@ -17,35 +15,13 @@ int main()
     bool ballStarted = false;
 
     // Game Loop
-    while (window.isOpen())
+    while (game.running())
     {
-		// Event Polling
-        while (window.pollEvent(ev))
-        {
-            switch (ev.type)
-            {
-			    case sf::Event::Closed :
-                    window.close();
-			    	break;
+		// update
+		game.update();
 
-				case sf::Event::KeyPressed:
-                    if (ev.key.code == sf::Keyboard::Escape)
-                    {
-                        window.close();
-                    }
-                    break;
-
-                default:
-					break;
-            }
-        }
-
-		// Rendering
-		window.clear(sf::Color::Black); // Clear old frame
-
-		// Draw your game objects here
-
-		window.display();   // Tell app that the window is done drawing and to display the new frame
+		// render
+		game.render();
     }
 
     return 0;
