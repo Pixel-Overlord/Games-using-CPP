@@ -1,74 +1,52 @@
-#include <SFML/Graphics.hpp>
+#include <iostream>
+#include "Game.h"
 
 int main()
 {
-    // create a window
-    sf::RenderWindow window(sf::VideoMode({ 800, 600 }), "Pong");
+    // Window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Pong", sf::Style::Titlebar| sf::Style::Close| sf::Style::Resize);
 
-    // Paddle
-    sf::RectangleShape paddle({ 100.f, 20.f });
-    paddle.setPosition({ 350.f, 560.f });
-    paddle.setFillColor(sf::Color::White);
+    sf::Event ev;
 
-    // ball
-    sf::CircleShape ball( 10.f );
-    paddle.setPosition({ 390.f, 290.f });
-    paddle.setFillColor(sf::Color::White);
+    // Font
+    sf::Font font;
+    font.loadFromFile("D:/Games - C++/Game Repos/Game1/Game1/Fonts/game_over.ttf");
+
+    // Timer
+    sf::Clock timer;
+    bool ballStarted = false;
 
     // Game Loop
     while (window.isOpen())
     {
-		// Timer for starting the ball
-        sf::Clock timer;
-        bool ballStarted = false;
-        float ballSpeed = 4.f;
-
-        // Event loop
-        while (const std::optional<sf::Event> event = window.pollEvent())
+		// Event Polling
+        while (window.pollEvent(ev))
         {
-            if (event->is<sf::Event::Closed>())
+            switch (ev.type)
             {
-                window.close();
-            }
-
-            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
-            {
-                if (keyPressed->code == sf::Keyboard::Key::Escape)
-                {
+			    case sf::Event::Closed :
                     window.close();
-                }
+			    	break;
+
+				case sf::Event::KeyPressed:
+                    if (ev.key.code == sf::Keyboard::Escape)
+                    {
+                        window.close();
+                    }
+                    break;
+
+                default:
+					break;
             }
         }
 
-		// Paddle movement
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-        {
-            paddle.move({ -0.5f, 0.f });
-        }
+		// Rendering
+		window.clear(sf::Color::Black); // Clear old frame
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-        {
-            paddle.move({ 0.5f, 0.f });
-        }
+		// Draw your game objects here
 
-		// Start the ball after 5 seconds
-        if (!ballStarted && timer.getElapsedTime().asSeconds() >= 0.5f)
-        {
-            ballStarted = true;
-        }
-
-        if (ballStarted)
-        {
-            ball.move({ 0.f, ballSpeed });
-        }
-
-        window.clear(sf::Color::Black);
-
-        // Draw objects here
-        window.draw(ball);
-		window.draw(paddle);
-
-        window.display();
+		window.display();   // Tell app that the window is done drawing and to display the new frame
     }
+
     return 0;
 }
