@@ -146,19 +146,34 @@ void Game::updateEnemies()
 		}
 	}
 
-	// Move the enemies down the screen
+	/*
+	* Move the enemies down the screen and remove them if they are clicked on or go off the screen	
+	*/
 	for (int i = 0; i < this->enemies.size(); i++)
 	{
-		this->enemies[i].move(0.f, 1.f);	// move the enemy down by 1 pixel
+		bool deleteEnemy = false;
 
-		// check if clicked upon
+		this->enemies[i].move(0.f, 1.f);
+
+		// Remove enemies that are clicked on by the mouse
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
 			// check if the mouse position is within the bounds of the enemy
 			if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
 			{
-				this->enemies.erase(this->enemies.begin() + i);	// remove the enemy from the vector
+				deleteEnemy = true;
 			}
+		}
+
+		// Remove enemies that go off the screen
+		if (this->enemies[i].getPosition().y > this->window->getSize().y)
+		{
+			deleteEnemy = true;
+		}
+
+		if (deleteEnemy)
+		{
+			this->enemies.erase(this->enemies.begin() + i);
 		}
 	}
 }
