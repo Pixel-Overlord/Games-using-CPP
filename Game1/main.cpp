@@ -3,6 +3,9 @@
 
 int main()
 {
+	// Seed the random number generator
+	std::srand(static_cast<unsigned>(time(NULL)));
+
 	// Init new game object
 	Game game;
 

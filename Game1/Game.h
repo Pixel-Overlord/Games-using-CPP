@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
+#include <ctime>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -13,14 +15,23 @@
 class Game
 {
 private: 
-	// Variables
-	// Window
+	// Variables for Window
 	sf::RenderWindow* window;	// dynamically allocated window object
 	sf::VideoMode videoMode;	
 	sf::Event ev;
 
-	// Game Objects
-	sf::RectangleShape enemy;	
+	// Mouse Positions
+	sf::Vector2i mousePosWindow;	// holds mouse position relative to the window
+
+	// Game Logic Variables
+	int points;
+	float enemySpawnTimer;
+	float enemySpawnTimerMax;
+	int maxEnemies;
+
+	// Vector to hold multiple enemies
+	std::vector<sf::RectangleShape> enemies;
+	sf::RectangleShape enemy;
 
 	// private functions
 	void initVariables();
@@ -33,11 +44,16 @@ public:
 	virtual ~Game();	// destructor
 
 	// Accessors
-	const bool running() const;	// check if the window is open
+	const bool running() const;	// check if the window is running or open.
 
 	// Functions
 	void pollEvents();	// handle events
+	void spawnEnemy();
+	void updateMousePositions();
+
+	void updateEnemies();
 	void update();
+
+	void renderEnemies();
 	void render();
 };
-
