@@ -12,6 +12,21 @@ void Game::initWindow()
 	this->videoMode.width = 800;
 
 	this->window = new sf::RenderWindow(this->videoMode, "Pong", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
+
+	this-> window->setFramerateLimit(144);
+}
+
+void Game::initEnemies()
+{
+	this->enemy.setPosition(sf::Vector2f(400.f, 300.f));
+
+	this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+	this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));	// scale the enemy to half its original size
+
+	this->enemy.setFillColor(sf::Color::Cyan);
+
+	this->enemy.setOutlineThickness(1.f);
+	this->enemy.setOutlineColor(sf::Color::Cyan);
 }
 
 // Constructors
@@ -20,6 +35,7 @@ Game::Game()
 	// Initialize member variables and create the game window
 	this->initVariables();
 	this->initWindow();
+	this->initEnemies();
 }
 
 // Destructors
@@ -59,6 +75,12 @@ void Game::pollEvents()
 void Game::update()
 {
 	this->pollEvents();	// handle events
+
+	//// update mouse position relative to the screen
+	//std::cout << "Mouse Position relative to the screen: " << sf::Mouse::getPosition().x << ", " << sf::Mouse::getPosition().y << std::endl;
+
+	//// update mouse position relative to the window
+	//std::cout << "Mouse Position Relative to Window: " << sf::Mouse::getPosition(*this->window).x << ", " << sf::Mouse::getPosition(*this->window).y << std::endl;
 }
 
 void Game::render()
@@ -71,8 +93,10 @@ void Game::render()
 	*  - draws the new frame
 	*/
 
-	this->window->clear(sf::Color(255, 0, 0, 255));	// clear the window with color
-
+	this->window->clear(sf::Color::Black);	// clear the window with color
 	// Draw game here
+
+	this->window->draw(this->enemy);
+
 	this->window->display();	// window is ready to display added objects (or rendered frame)
 }
