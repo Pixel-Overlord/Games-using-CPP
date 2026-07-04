@@ -117,6 +117,7 @@ void Game::spawnEnemy()
 void Game::updateMousePositions()
 {
 	this->mousePosWindow = sf::Mouse::getPosition(*this->window);	// get mouse position relative to the window
+	this->mousePosView = this->window->mapPixelToCoords(this->mousePosWindow);	// get mouse position relative to the view
 }
 
 /*
@@ -146,9 +147,19 @@ void Game::updateEnemies()
 	}
 
 	// Move the enemies down the screen
-	for (auto& e : this->enemies)
+	for (int i = 0; i < this->enemies.size(); i++)
 	{
-		e.move(0.f, 1.f);	// move the enemy down by 1 pixel
+		this->enemies[i].move(0.f, 1.f);	// move the enemy down by 1 pixel
+
+		// check if clicked upon
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			// check if the mouse position is within the bounds of the enemy
+			if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
+			{
+				this->enemies.erase(this->enemies.begin() + i);	// remove the enemy from the vector
+			}
+		}
 	}
 }
 

@@ -21,7 +21,8 @@ private:
 	sf::Event ev;
 
 	// Mouse Positions
-	sf::Vector2i mousePosWindow;	// holds mouse position relative to the window
+	sf::Vector2i mousePosWindow;	// relative to the window
+	sf::Vector2f mousePosView;		// relative to the view
 
 	// Game Logic Variables
 	int points;
