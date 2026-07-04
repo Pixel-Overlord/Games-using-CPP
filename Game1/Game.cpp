@@ -14,7 +14,7 @@ void Game::initVariables()
 	this->points = 0;
 	this->enemySpawnTimerMax = 10.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
-	this->maxEnemies = 5;
+	this->maxEnemies = 10;
 }
 
 void Game::initWindow()
@@ -153,7 +153,7 @@ void Game::updateEnemies()
 	{
 		bool deleteEnemy = false;
 
-		this->enemies[i].move(0.f, 1.f);
+		this->enemies[i].move(0.f, 3.f);
 
 		// Remove enemies that are clicked on by the mouse
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -162,6 +162,9 @@ void Game::updateEnemies()
 			if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
 			{
 				deleteEnemy = true;
+
+				// Gain points
+				this->points += 1;
 			}
 		}
 
