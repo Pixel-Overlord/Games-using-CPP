@@ -25,6 +25,24 @@ void Game::initWindow()
 	this-> window->setFramerateLimit(60);
 }
 
+void Game::initFonts()
+{
+	if (this->font.loadFromFile("Fonts/zrnic rg.ttf"))
+	{
+		std::cout << "ERROR::GAME::INITFONTS::Failed to load font!" << "\n";
+	}
+}
+
+void Game::initText()
+{
+	this->uiText.setFont(this->font);
+	this->uiText.setCharacterSize(24);
+	this->uiText.setFillColor(sf::Color::White);
+	this->uiText.setString("NONE");
+	// set the position of the text to the top left corner of the window
+	this->uiText.setPosition(10.f, 10.f);
+}
+
 void Game::initEnemies()
 {
 	this->enemy.setPosition(sf::Vector2f(400.f, 300.f));
@@ -44,6 +62,8 @@ Game::Game()
 	// Initialize member variables and create the game window
 	this->initVariables();
 	this->initWindow();
+	this->initFonts();
+	this->initText();
 	this->initEnemies();
 }
 
@@ -121,6 +141,16 @@ void Game::updateMousePositions()
 {
 	this->mousePosWindow = sf::Mouse::getPosition(*this->window);	// get mouse position relative to the window
 	this->mousePosView = this->window->mapPixelToCoords(this->mousePosWindow);	// get mouse position relative to the view
+}
+
+void Game::updateText()
+{
+	std::stringstream ss;
+
+	ss << "Points: " << this->points << "\n"
+		<< "Health: " << this->health;
+
+	this->uiText.setString(ss.str());
 }
 
 /*
@@ -205,7 +235,7 @@ void Game::update()
 	if (this->endGame == false)
 	{
 		this->updateMousePositions();
-
+		this->updateText();
 		this->updateEnemies();
 	}
 
@@ -217,12 +247,20 @@ void Game::update()
 	}
 }
 
-void Game::renderEnemies()
+/*
+ * Renders the text not only on the window but also on the target (which can be a window or a texture).
+*/
+void Game::renderText(sf::RenderTarget& target)
+{
+	target.draw(this->uiText);
+}
+
+void Game::renderEnemies(sf::RenderTarget& target)
 {
 	// Render the enemies on the screen
 	for (auto& e : this->enemies)
 	{
-		this->window->draw(e);
+		target.draw(e);
 	}
 }
 
@@ -241,7 +279,8 @@ void Game::render()
 	this->window->clear(sf::Color::Black);
 
 	// Draw game here
-	this->renderEnemies();
+	this->renderEnemies(*this->window);
+	this->renderText(*this->window);
 
 	this->window->display();	// window is ready to display added objects (or rendered frame)
 }
