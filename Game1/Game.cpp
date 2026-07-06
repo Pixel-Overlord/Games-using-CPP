@@ -221,6 +221,20 @@ void Game::updateEnemies()
 
 		this->enemies[i].move(0.f, 3.f);
 
+		// Highlight the enemy when the mouse is over it
+		if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
+		{
+			this->enemies[i].setScale(0.9f, 0.9f);
+			this->enemies[i].setOutlineThickness(3.f);
+			this->enemies[i].setOutlineColor(sf::Color::White);
+		}
+		else
+		{
+			this->enemies[i].setScale(1.f, 1.f);
+			this->enemies[i].setOutlineThickness(1.f);
+			this->enemies[i].setOutlineColor(this->enemies[i].getFillColor());
+		}
+
 		// Remove enemies that go off the screen
 		if (this->enemies[i].getPosition().y > this->window->getSize().y)
 		{
