@@ -9,10 +9,11 @@ void Game::initVariables()
 	this->points = 0;
 	this->health = 30;
 	this->endGame = false;
-	this->enemySpawnTimerMax = 20.f;
+	this->enemySpawnTimerMax = 15.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
-	this->maxEnemies = 5;
+	this->maxEnemies = 10;
 	this->mouseHeld = false;
+	this->paused = false;
 }
 
 void Game::initWindow()
@@ -100,6 +101,12 @@ void Game::pollEvents()
 			{
 				this->window->close();
 			}
+
+			if (this->ev.key.code == sf::Keyboard::Space)
+			{
+				this->paused = !this->paused;
+			}
+
 			break;
 		}
 	}
@@ -129,23 +136,23 @@ void Game::spawnEnemy()
 	switch (type)
 	{
 		case 0:
-			this->enemy.setSize(sf::Vector2f(20.f, 20.f));
+			this->enemy.setSize(sf::Vector2f(30.f, 30.f));
 			this->enemy.setFillColor(sf::Color::Magenta);
 			break;
 		case 1:
-			this->enemy.setSize(sf::Vector2f(40.f, 40.f));
+			this->enemy.setSize(sf::Vector2f(50.f, 50.f));
 			this->enemy.setFillColor(sf::Color::Blue);
 			break;
 		case 2:
-			this->enemy.setSize(sf::Vector2f(60.f, 60.f));
+			this->enemy.setSize(sf::Vector2f(70.f, 70.f));
 			this->enemy.setFillColor(sf::Color::Cyan);
 			break;
 		case 3:
-			this->enemy.setSize(sf::Vector2f(80.f, 80.f));
+			this->enemy.setSize(sf::Vector2f(90.f, 90.f));
 			this->enemy.setFillColor(sf::Color::Red);
 			break;
 		case 4:	
-			this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+			this->enemy.setSize(sf::Vector2f(110.f, 110.f));
 			this->enemy.setFillColor(sf::Color::Green);
 			break;
 		default:
@@ -273,6 +280,9 @@ void Game::update()
 {
 	this->pollEvents();	// handle events
 
+	if (this->paused)
+		return;
+
 	if (this->endGame == false)
 	{
 		this->updateMousePositions();
@@ -322,6 +332,21 @@ void Game::render()
 	// Draw game here
 	this->renderEnemies(*this->window);
 	this->renderText(*this->window);
+
+	// Draw the pause text if the game is paused
+	if (this->paused)
+	{
+		sf::Text pauseText;
+
+		pauseText.setFont(this->font);
+		pauseText.setCharacterSize(50);
+		pauseText.setFillColor(sf::Color::Yellow);
+		pauseText.setString("PAUSED");
+
+		pauseText.setPosition(180.f, 450.f);
+
+		this->window->draw(pauseText);
+	}
 
 	this->window->display();	// window is ready to display added objects (or rendered frame)
 }
