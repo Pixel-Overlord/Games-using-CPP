@@ -7,18 +7,19 @@ void Game::initVariables()
 
 	// Game logic variables
 	this->points = 0;
-	this->health = 10;
+	this->health = 30;
 	this->endGame = false;
-	this->enemySpawnTimerMax = 10.f;
+	this->enemySpawnTimerMax = 15.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 	this->maxEnemies = 10;
 	this->mouseHeld = false;
+	this->paused = false;
 }
 
 void Game::initWindow()
 {
-	this->videoMode.height = 600;
-	this->videoMode.width = 800;
+	this->videoMode.height = 1000;
+	this->videoMode.width = 500;
 
 	this->window = new sf::RenderWindow(this->videoMode, "Pong", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
 
@@ -100,6 +101,12 @@ void Game::pollEvents()
 			{
 				this->window->close();
 			}
+
+			if (this->ev.key.code == sf::Keyboard::Space)
+			{
+				this->paused = !this->paused;
+			}
+
 			break;
 		}
 	}
@@ -110,6 +117,7 @@ void Game::pollEvents()
  * @ return void
  * 
  * Spawns a new enemy and adds it to the enemies vector.
+ *  - sets a random difficulty (size) of the enemy.
  *	- sets a random color
  *	- sets a random posiiton.
  *	- add enemy to enemies vector
@@ -122,11 +130,36 @@ void Game::spawnEnemy()
 		0.f
 	);
 
-	this->enemy.setFillColor(sf::Color(
-		rand() % 256,	// random red value
-		rand() % 256,	// random green value
-		rand() % 256	// random blue value
-	));
+	// Randomize enemy type. The higher the number, the easier the enemy.
+	int type = rand() % 5;
+
+	switch (type)
+	{
+		case 0:
+			this->enemy.setSize(sf::Vector2f(30.f, 30.f));
+			this->enemy.setFillColor(sf::Color::Magenta);
+			break;
+		case 1:
+			this->enemy.setSize(sf::Vector2f(50.f, 50.f));
+			this->enemy.setFillColor(sf::Color::Blue);
+			break;
+		case 2:
+			this->enemy.setSize(sf::Vector2f(70.f, 70.f));
+			this->enemy.setFillColor(sf::Color::Cyan);
+			break;
+		case 3:
+			this->enemy.setSize(sf::Vector2f(90.f, 90.f));
+			this->enemy.setFillColor(sf::Color::Red);
+			break;
+		case 4:	
+			this->enemy.setSize(sf::Vector2f(110.f, 110.f));
+			this->enemy.setFillColor(sf::Color::Green);
+			break;
+		default:
+			this->enemy.setSize(sf::Vector2f(30.f, 30.f));
+			this->enemy.setFillColor(sf::Color::White);
+			break;
+	}
 
 	this->enemies.push_back(this->enemy);	// add the enemy to the vector
 }
@@ -135,7 +168,7 @@ void Game::spawnEnemy()
  * @ return void
  * 
  * Updates the mouse positions:
- * 	-relative to the window (Vector2i)
+ * 	- relative to the window (Vector2i)
 */
 void Game::updateMousePositions()
 {
@@ -210,13 +243,28 @@ void Game::updateEnemies()
 				// check if the mouse position is within the bounds of the enemy
 				if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
 				{
+					// Gain points
+					if (this->enemies[i].getFillColor() == sf::Color::Magenta) {
+						points += 10;
+					}
+					else if (this->enemies[i].getFillColor() == sf::Color::Blue) {
+						points += 7;
+					}
+					else if (this->enemies[i].getFillColor() == sf::Color::Cyan) {
+						points += 5;
+					}
+					else if (this->enemies[i].getFillColor() == sf::Color::Red) {
+						points += 3;
+					}
+					else if (this->enemies[i].getFillColor() == sf::Color::Green) {
+						points += 1;
+					}
+
+					std::cout << "Points: " << this->points << "\n";
+
 					// delete the enemy
 					deleteEnemy = true;
 					this->enemies.erase(this->enemies.begin() + i);
-
-					// Gain points
-					this->points += 1;
-					std::cout << "Points: " << this->points << "\n";
 				}
 			}
 		}
@@ -231,6 +279,9 @@ void Game::updateEnemies()
 void Game::update()
 {
 	this->pollEvents();	// handle events
+
+	if (this->paused)
+		return;
 
 	if (this->endGame == false)
 	{
@@ -281,6 +332,21 @@ void Game::render()
 	// Draw game here
 	this->renderEnemies(*this->window);
 	this->renderText(*this->window);
+
+	// Draw the pause text if the game is paused
+	if (this->paused)
+	{
+		sf::Text pauseText;
+
+		pauseText.setFont(this->font);
+		pauseText.setCharacterSize(50);
+		pauseText.setFillColor(sf::Color::Yellow);
+		pauseText.setString("PAUSED");
+
+		pauseText.setPosition(180.f, 450.f);
+
+		this->window->draw(pauseText);
+	}
 
 	this->window->display();	// window is ready to display added objects (or rendered frame)
 }

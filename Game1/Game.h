@@ -39,6 +39,7 @@ private:
 	float enemySpawnTimerMax;
 	int maxEnemies;
 	bool mouseHeld;
+	bool paused;
 
 	// Vector to hold multiple enemies
 	std::vector<sf::RectangleShape> enemies;
