@@ -26,6 +26,8 @@ private:
 
 	// Game Logic Variables
 	unsigned points;
+	int health;
+	bool endGame;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	int maxEnemies;
@@ -47,6 +49,7 @@ public:
 
 	// Accessors
 	const bool running() const;	// check if the window is running or open.
+	const bool getEndGame() const;	// check if the game has ended.
 
 	// Functions
 	void pollEvents();	// handle events

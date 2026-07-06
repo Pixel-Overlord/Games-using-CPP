@@ -18,7 +18,7 @@ int main()
     bool ballStarted = false;
 
     // Game Loop
-    while (game.running())
+    while (game.running() && !game.getEndGame())
     {
 		// update
 		game.update();
