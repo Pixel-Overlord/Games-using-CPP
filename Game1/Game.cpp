@@ -21,7 +21,7 @@ void Game::initWindow()
 	this->videoMode.height = 1000;
 	this->videoMode.width = 500;
 
-	this->window = new sf::RenderWindow(this->videoMode, "Pong", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
+	this->window = new sf::RenderWindow(this->videoMode, "Box Blitz", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize);
 
 	this-> window->setFramerateLimit(60);
 }
