@@ -6,15 +6,11 @@ void Game::initVariables()
 	this->window = nullptr;
 
 	// Game logic variables
-	int points;
-	float enemySpawnTimer;
-	float enemySpawnTimerMax;
-	int maxEnemies;
-
 	this->points = 0;
 	this->enemySpawnTimerMax = 10.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 	this->maxEnemies = 10;
+	this->mouseHeld = false;
 }
 
 void Game::initWindow()
@@ -147,7 +143,7 @@ void Game::updateEnemies()
 	}
 
 	/*
-	* Move the enemies down the screen and remove them if they are clicked on or go off the screen	
+	* Move and update the enemies.
 	*/
 	for (int i = 0; i < this->enemies.size(); i++)
 	{
@@ -155,28 +151,38 @@ void Game::updateEnemies()
 
 		this->enemies[i].move(0.f, 3.f);
 
-		// Remove enemies that are clicked on by the mouse
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		{
-			// check if the mouse position is within the bounds of the enemy
-			if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
-			{
-				deleteEnemy = true;
-
-				// Gain points
-				this->points += 1;
-			}
-		}
-
 		// Remove enemies that go off the screen
 		if (this->enemies[i].getPosition().y > this->window->getSize().y)
 		{
-			deleteEnemy = true;
+			this->enemies.erase(this->enemies.begin() + i);
+		}
+	}
+
+	// Remove enemies that are clicked on by the mouse
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (this->mouseHeld == false)
+		{
+			this->mouseHeld = true;
+			bool deleteEnemy = false;
+			for (int i = 0; i < this->enemies.size() && deleteEnemy == false; i++)
+			{
+				// check if the mouse position is within the bounds of the enemy
+				if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
+				{
+					// delete the enemy
+					deleteEnemy = true;
+					this->enemies.erase(this->enemies.begin() + i);
+
+					// Gain points
+					this->points += 1;
+				}
+			}
 		}
 
-		if (deleteEnemy)
+		else
 		{
-			this->enemies.erase(this->enemies.begin() + i);
+			this->mouseHeld = false;
 		}
 	}
 }

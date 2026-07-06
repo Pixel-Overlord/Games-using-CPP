@@ -25,10 +25,11 @@ private:
 	sf::Vector2f mousePosView;		// relative to the view
 
 	// Game Logic Variables
-	int points;
+	unsigned points;
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	int maxEnemies;
+	bool mouseHeld;
 
 	// Vector to hold multiple enemies
 	std::vector<sf::RectangleShape> enemies;
