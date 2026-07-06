@@ -27,9 +27,15 @@ private:
 
 	// Resources
 	sf::Font font;
+	sf::Font gameOverFont;
 
 	// Text
 	sf::Text uiText;
+	sf::Text pauseText;
+	sf::Text gameOverText;
+
+	// Timer
+	sf::Clock gameOverClock;
 
 	// Game Logic Variables
 	unsigned points;

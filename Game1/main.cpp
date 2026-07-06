@@ -9,12 +9,8 @@ int main()
 	// Init new game object
 	Game game;
 
-    // Timer
-    sf::Clock timer;
-    bool ballStarted = false;
-
     // Game Loop
-    while (game.running() && !game.getEndGame())
+    while (game.running() /*&& !game.getEndGame()*/)
     {
 		// update
 		game.update();

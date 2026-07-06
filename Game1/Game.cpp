@@ -28,7 +28,12 @@ void Game::initWindow()
 
 void Game::initFonts()
 {
-	if (this->font.loadFromFile("Fonts/zrnic rg.ttf"))
+	if (this->font.loadFromFile("Fonts/zrnic-rg.ttf"))
+	{
+		std::cout << "ERROR::GAME::INITFONTS::Failed to load font!" << "\n";
+	}
+
+	if (this->gameOverFont.loadFromFile("Fonts/Pixel-Game.otf"))
 	{
 		std::cout << "ERROR::GAME::INITFONTS::Failed to load font!" << "\n";
 	}
@@ -42,6 +47,18 @@ void Game::initText()
 	this->uiText.setString("NONE");
 	// set the position of the text to the top left corner of the window
 	this->uiText.setPosition(10.f, 10.f);
+
+	this->pauseText.setFont(this->font);
+	this->pauseText.setCharacterSize(60);
+	this->pauseText.setFillColor(sf::Color::Yellow);
+	this->pauseText.setString("PAUSED");
+	this->pauseText.setPosition(180.f, 450.f);
+
+	this->gameOverText.setFont(this->gameOverFont);
+	this->gameOverText.setCharacterSize(100);
+	this->gameOverText.setFillColor(sf::Color::Red);
+	this->gameOverText.setString("GAME OVER");
+	this->gameOverText.setPosition(100.f, 450.f);
 }
 
 void Game::initEnemies()
@@ -144,15 +161,15 @@ void Game::spawnEnemy()
 			this->enemy.setFillColor(sf::Color::Blue);
 			break;
 		case 2:
-			this->enemy.setSize(sf::Vector2f(70.f, 70.f));
+			this->enemy.setSize(sf::Vector2f(65.f, 65.f));
 			this->enemy.setFillColor(sf::Color::Cyan);
 			break;
 		case 3:
-			this->enemy.setSize(sf::Vector2f(90.f, 90.f));
+			this->enemy.setSize(sf::Vector2f(80.f, 80.f));
 			this->enemy.setFillColor(sf::Color::Red);
 			break;
 		case 4:	
-			this->enemy.setSize(sf::Vector2f(110.f, 110.f));
+			this->enemy.setSize(sf::Vector2f(100.f, 100.f));
 			this->enemy.setFillColor(sf::Color::Green);
 			break;
 		default:
@@ -221,6 +238,20 @@ void Game::updateEnemies()
 
 		this->enemies[i].move(0.f, 3.f);
 
+		// Highlight the enemy when the mouse is over it
+		if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
+		{
+			this->enemies[i].setScale(0.9f, 0.9f);
+			this->enemies[i].setOutlineThickness(3.f);
+			this->enemies[i].setOutlineColor(sf::Color::White);
+		}
+		else
+		{
+			this->enemies[i].setScale(1.f, 1.f);
+			this->enemies[i].setOutlineThickness(1.f);
+			this->enemies[i].setOutlineColor(this->enemies[i].getFillColor());
+		}
+
 		// Remove enemies that go off the screen
 		if (this->enemies[i].getPosition().y > this->window->getSize().y)
 		{
@@ -269,10 +300,10 @@ void Game::updateEnemies()
 			}
 		}
 
-		else
-		{
-			this->mouseHeld = false;
-		}
+	}
+	else
+	{
+		this->mouseHeld = false;
 	}
 }
 
@@ -283,18 +314,38 @@ void Game::update()
 	if (this->paused)
 		return;
 
-	if (this->endGame == false)
+	if (!this->endGame)
 	{
 		this->updateMousePositions();
 		this->updateText();
 		this->updateEnemies();
 	}
 
+
 	// Endgame condition
-	if (this->health <= 0)
+	if (this->health <= 0 && !this->endGame)
 	{
+		this->updateText();
+
 		this->endGame = true;
 		std::cout << "Game Over! Final Score: " << this->points << "\n";
+		this->gameOverClock.restart();
+	}
+
+	/* The flow is:
+	 *	- Health reaches 0.
+	 *	- endGame becomes true.
+	 *	- "GAME OVER" is drawn every frame.
+	 *	- After 3 seconds, the window closes.
+	*/
+	if (this->endGame)
+	{
+		if (this->gameOverClock.getElapsedTime().asSeconds() >= 3.f)
+		{
+			this->window->close();
+		}
+
+		return;
 	}
 }
 
@@ -336,16 +387,13 @@ void Game::render()
 	// Draw the pause text if the game is paused
 	if (this->paused)
 	{
-		sf::Text pauseText;
+		this->window->draw(this->pauseText);
+	}
 
-		pauseText.setFont(this->font);
-		pauseText.setCharacterSize(50);
-		pauseText.setFillColor(sf::Color::Yellow);
-		pauseText.setString("PAUSED");
-
-		pauseText.setPosition(180.f, 450.f);
-
-		this->window->draw(pauseText);
+	// Draw the game over text if the game has ended
+	if (this->endGame)
+	{
+		this->window->draw(this->gameOverText);
 	}
 
 	this->window->display();	// window is ready to display added objects (or rendered frame)
